@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enterprise Checkout Demo</title>
+    <style>
+      :root {
+        --bg: #f4efe6;
+        --panel: #fffaf2;
+        --ink: #1d2433;
+        --accent: #0b6e4f;
+        --line: #d7c7ac;
+        --danger: #a4312f;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Georgia, 'Times New Roman', serif;
+        color: var(--ink);
+        background: linear-gradient(135deg, #e8dcc8 0%, var(--bg) 55%, #d9e3d3 100%);
+      }
+      main {
+        max-width: 960px;
+        margin: 32px auto;
+        padding: 0 16px;
+      }
+      .panel {
+        background: rgba(255, 250, 242, 0.92);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 14px 40px rgba(33, 40, 52, 0.08);
+        margin-bottom: 16px;
+      }
+      h1, h2 { margin-top: 0; }
+      .grid { display: grid; gap: 12px; }
+      label { display: grid; gap: 6px; font-weight: 700; }
+      input, button {
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        padding: 12px;
+        font: inherit;
+      }
+      button {
+        background: var(--accent);
+        color: white;
+        cursor: pointer;
+      }
+      .secondary { background: #24415a; }
+      .hidden { display: none; }
+      .error { color: var(--danger); font-weight: 700; }
+      .status { font-weight: 700; }
+      .muted { color: #5b6370; }
+      .summary { display: grid; gap: 10px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="panel" id="login-panel">
+        <h1>Client onboarding console</h1>
+        <p class="muted">Demo credentials: portfolio / quality-first</p>
+        <div class="grid">
+          <label for="username">Username
+            <input id="username" autocomplete="off" />
+          </label>
+          <label for="password">Password
+            <input id="password" type="password" />
+          </label>
+          <button id="login-button" type="button">Sign in</button>
+          <p id="login-error" class="error hidden">Invalid credentials provided.</p>
+        </div>
+      </section>
+
+      <section class="panel hidden" id="catalog-panel">
+        <h2>Approval-ready cart</h2>
+        <div class="summary">
+          <span>Regression bundle: 2 seats</span>
+          <span>Observability add-on: enabled</span>
+          <span id="cart-status" class="status">Cart is empty</span>
+        </div>
+        <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+          <button id="add-package-button" type="button">Add package</button>
+          <button id="clear-cart-button" type="button" class="secondary">Clear cart</button>
+        </div>
+      </section>
+
+      <section class="panel hidden" id="checkout-panel">
+        <h2>Release gate</h2>
+        <div class="summary">
+          <span id="checkout-status" class="status">Awaiting approval</span>
+          <span class="muted">Rules: payment requires an authenticated user and at least one cart item.</span>
+        </div>
+        <button id="pay-button" type="button" style="margin-top: 16px;">Approve purchase</button>
+      </section>
+    </main>
+
+    <script>
+      const state = {
+        isLoggedIn: false,
+        cartCount: 0
+      };
+
+      const loginPanel = document.getElementById('login-panel');
+      const catalogPanel = document.getElementById('catalog-panel');
+      const checkoutPanel = document.getElementById('checkout-panel');
+      const loginError = document.getElementById('login-error');
+      const cartStatus = document.getElementById('cart-status');
+      const checkoutStatus = document.getElementById('checkout-status');
+
+      function revealWorkspace() {
+        loginPanel.classList.add('hidden');
+        catalogPanel.classList.remove('hidden');
+        checkoutPanel.classList.remove('hidden');
+      }
+
+      function updateCartStatus() {
+        cartStatus.textContent = state.cartCount === 0
+          ? 'Cart is empty'
+          : `Items in cart: ${state.cartCount}`;
+      }
+
+      document.getElementById('login-button').addEventListener('click', () => {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (username === 'portfolio' && password === 'quality-first') {
+          state.isLoggedIn = true;
+          loginError.classList.add('hidden');
+          revealWorkspace();
+          return;
+        }
+
+        loginError.classList.remove('hidden');
+      });
+
+      document.getElementById('add-package-button').addEventListener('click', () => {
+        if (!state.isLoggedIn) {
+          return;
+        }
+        state.cartCount += 1;
+        updateCartStatus();
+      });
+
+      document.getElementById('clear-cart-button').addEventListener('click', () => {
+        state.cartCount = 0;
+        updateCartStatus();
+      });
+
+      document.getElementById('pay-button').addEventListener('click', () => {
+        if (!state.isLoggedIn || state.cartCount === 0) {
+          checkoutStatus.textContent = 'Add a package before approval.';
+          return;
+        }
+
+        checkoutStatus.textContent = 'Purchase approved successfully.';
+      });
+    </script>
+  </body>
+</html>
