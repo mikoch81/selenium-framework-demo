@@ -10,7 +10,7 @@
     <description>Portfolio demo showing a maintainable Selenium + Java UI automation framework</description>
 
     <properties>
-        <maven.compiler.release>25</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.12.2</junit.version>
         <selenium.version>4.33.0</selenium.version>
